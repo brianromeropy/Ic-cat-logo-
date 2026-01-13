@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { addToCart } from '../utils/cart'
+import { formatPrice } from '../utils/format'
 
 const CardProducto = ({ producto }) => {
   const [loading, setLoading] = useState(false)
@@ -33,46 +34,55 @@ const CardProducto = ({ producto }) => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-      <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
+    <div className="bg-dark-surface rounded-xl overflow-hidden hover:shadow-gold transition-all duration-300 border border-gold/20 group hover:border-gold">
+      <div className="h-56 bg-gradient-to-br from-dark-card to-dark-surface flex items-center justify-center relative overflow-hidden">
         {producto.imagen ? (
           <img
             src={producto.imagen}
             alt={producto.nombre}
-            className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
+            className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
           />
         ) : (
           <div className="text-center">
-            <div className="text-6xl mb-2">🔌</div>
-            <span className="text-gray-400 text-sm">Sin imagen</span>
+            <div className="w-20 h-20 mx-auto mb-3 bg-gold/10 rounded-full flex items-center justify-center">
+              <svg className="w-10 h-10 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+              </svg>
+            </div>
+            <span className="text-gray-500 text-xs">Sin imagen</span>
           </div>
         )}
         {producto.stock === 0 && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <span className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold">
+          <div className="absolute inset-0 bg-black/80 flex items-center justify-center backdrop-blur-sm">
+            <span className="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm">
               Sin Stock
             </span>
           </div>
         )}
       </div>
       
-      <div className="p-5">
-        <h3 className="font-bold text-lg mb-2 text-gray-800 line-clamp-2 min-h-[3.5rem]">
+      <div className="p-6">
+        <h3 className="font-bold text-lg mb-3 text-white line-clamp-2 min-h-[3.5rem] leading-tight">
           {producto.nombre}
         </h3>
         {producto.codigo && (
-          <p className="text-gray-600 text-sm mb-3 font-mono bg-gray-50 px-2 py-1 rounded inline-block">
+          <p className="text-gold text-xs mb-3 font-mono bg-dark-card px-3 py-1.5 rounded-lg border border-gold/30 inline-block">
             {producto.codigo}
           </p>
         )}
-        <div className="flex flex-wrap gap-2 mb-3">
+        <div className="flex flex-wrap gap-2 mb-4">
           {producto.categoria && (
-            <span className="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
+            <span className="text-xs bg-gold/10 text-gold px-3 py-1 rounded-full font-medium border border-gold/30">
               {producto.categoria}
             </span>
           )}
+          {Array.isArray(producto.modelo_iphone) && producto.modelo_iphone.length > 0 && (
+            <span className="text-xs bg-gold/10 text-gold-light px-3 py-1 rounded-full font-medium border border-gold/30">
+              {producto.modelo_iphone.join(', ')}
+            </span>
+          )}
           {producto.fabricante && (
-            <span className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full font-medium">
+            <span className="text-xs bg-dark-card text-gray-400 px-3 py-1 rounded-full font-medium border border-gray-700">
               {producto.fabricante}
             </span>
           )}
@@ -80,15 +90,15 @@ const CardProducto = ({ producto }) => {
         
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="text-gray-500 text-xs">Precio</p>
-            <p className="text-gray-800 font-bold text-xl">
-              ${producto.precio?.toLocaleString('es-AR') || '0'}
+            <p className="text-gray-500 text-xs mb-1">Precio</p>
+            <p className="text-gold font-bold text-2xl">
+              {formatPrice(producto.precio || 0)}
             </p>
           </div>
           <span className={`text-xs px-3 py-1 rounded-full font-medium ${
             producto.stock > 0 
-              ? 'bg-green-100 text-green-800' 
-              : 'bg-red-100 text-red-800'
+              ? 'bg-gold/10 text-gold border border-gold/30' 
+              : 'bg-red-900/30 text-red-400 border border-red-600/50'
           }`}>
             {producto.stock > 0 ? `${producto.stock} disponibles` : 'Sin stock'}
           </span>
@@ -97,12 +107,12 @@ const CardProducto = ({ producto }) => {
         <button
           onClick={handleAddToCart}
           disabled={producto.stock === 0 || loading || added}
-          className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2 ${
+          className={`w-full py-3.5 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 ${
             added
-              ? 'bg-green-500 text-white'
+              ? 'bg-gold text-dark-bg shadow-gold'
               : producto.stock > 0 && !loading
-                ? 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg transform hover:-translate-y-0.5'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-gold-gradient text-dark-bg hover:shadow-gold transform hover:scale-105'
+                : 'bg-dark-surface text-gray-600 border border-gray-700 cursor-not-allowed'
           }`}
         >
           {loading ? (

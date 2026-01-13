@@ -10,6 +10,15 @@ const api = axios.create({
   }
 })
 
+// Interceptor para manejar errores
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('Error de API:', error.response?.data || error.message)
+    return Promise.reject(error)
+  }
+)
+
 // Productos
 export const getProductos = async () => {
   const response = await api.get('/productos')

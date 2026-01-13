@@ -12,10 +12,23 @@ connectDB()
 // Middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }))
 app.use(express.json())
 app.use(cookieParser())
+
+// Logging middleware para debug
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/auth')) {
+    console.log(`${req.method} ${req.path}`, {
+      body: req.method === 'POST' ? { ...req.body, password: '***' } : undefined,
+      cookies: req.cookies
+    })
+  }
+  next()
+})
 
 // Routes
 app.use('/api/auth', require('./routes/auth'))

@@ -1,13 +1,29 @@
 import api from './api'
 
 export const login = async (email, password) => {
-  const response = await api.post('/auth/login', { email, password })
-  return response.data
+  try {
+    const response = await api.post('/auth/login', { email, password })
+    // Disparar evento para actualizar el estado de autenticación
+    window.dispatchEvent(new CustomEvent('authStateChanged'))
+    return response.data
+  } catch (error) {
+    console.error('Error en login:', error)
+    const errorMessage = error.response?.data?.message || error.response?.data?.errors?.[0]?.msg || 'Error al iniciar sesión'
+    throw new Error(errorMessage)
+  }
 }
 
 export const register = async (userData) => {
-  const response = await api.post('/auth/register', userData)
-  return response.data
+  try {
+    const response = await api.post('/auth/register', userData)
+    // Disparar evento para actualizar el estado de autenticación
+    window.dispatchEvent(new CustomEvent('authStateChanged'))
+    return response.data
+  } catch (error) {
+    console.error('Error en registro:', error)
+    const errorMessage = error.response?.data?.message || error.response?.data?.errors?.[0]?.msg || 'Error al registrar usuario'
+    throw new Error(errorMessage)
+  }
 }
 
 export const logout = async () => {
@@ -16,7 +32,8 @@ export const logout = async () => {
   } catch (error) {
     console.error('Error al cerrar sesión:', error)
   }
-  // Limpiar cualquier estado local si es necesario
+  // Disparar evento para actualizar el estado de autenticación
+  window.dispatchEvent(new CustomEvent('authStateChanged'))
 }
 
 export const isAuthenticated = async () => {

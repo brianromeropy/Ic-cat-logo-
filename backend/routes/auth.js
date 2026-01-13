@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const { body } = require('express-validator')
-const authController = require('../controllers/authController')
-const { authMiddleware } = require('../middleware/auth')
+const authController = require('../src/presentation/controllers/AuthController')
+const authMiddleware = require('../src/presentation/middleware/AuthMiddleware')
 
 // Validaciones
 const registerValidation = [
@@ -17,10 +17,9 @@ const loginValidation = [
   body('password').notEmpty()
 ]
 
-router.post('/register', registerValidation, authController.register)
-router.post('/login', loginValidation, authController.login)
-router.post('/logout', authController.logout)
-router.get('/me', authMiddleware, authController.me)
+router.post('/register', registerValidation, authController.register.bind(authController))
+router.post('/login', loginValidation, authController.login.bind(authController))
+router.post('/logout', authController.logout.bind(authController))
+router.get('/me', authMiddleware.authenticate.bind(authMiddleware), authController.me.bind(authController))
 
 module.exports = router
-

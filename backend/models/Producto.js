@@ -13,11 +13,22 @@ const productoSchema = new mongoose.Schema({
   },
   categoria: {
     type: String,
+    enum: ['IC de carga', 'PMIC', 'IC de audio', 'IC de imagen', 'IC de touch', 'IC de cámara'],
     trim: true
+  },
+  modelo_iphone: {
+    type: [String], // Array para soportar múltiples modelos
+    trim: true,
+    index: true
   },
   fabricante: {
     type: String,
     trim: true
+  },
+  costo: {
+    type: Number,
+    min: 0,
+    default: 0
   },
   precio: {
     type: Number,
@@ -50,6 +61,6 @@ const productoSchema = new mongoose.Schema({
 })
 
 // Índice para búsquedas
-productoSchema.index({ nombre: 'text', codigo: 'text', categoria: 'text' })
+productoSchema.index({ nombre: 'text', codigo: 'text', categoria: 'text', modelo_iphone: 'text' })
 
 module.exports = mongoose.model('Producto', productoSchema)
