@@ -1,0 +1,29 @@
+const mongoose = require('mongoose')
+
+const carritoSchema = new mongoose.Schema({
+  usuario: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Usuario',
+    required: true
+  },
+  items: [{
+    producto: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Producto',
+      required: true
+    },
+    cantidad: {
+      type: Number,
+      required: true,
+      min: 1,
+      default: 1
+    }
+  }]
+}, {
+  timestamps: true
+})
+
+// Índice único para usuario (evita duplicados)
+carritoSchema.index({ usuario: 1 }, { unique: true })
+
+module.exports = mongoose.model('Carrito', carritoSchema)
